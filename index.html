@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<title>TF2 voicelines</title>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+
+		<script src="js/script.js"></script>
+	
+	</head>
+
+	<body ng-app="voicelinesApp">
+
+		<div class="container" ng-controller="VoicelinesCtrl">
+
+			<h1>TF2 voiceline searcher</h1>
+			<p>
+				Search, preview and download TF2 voicelines. This site fetches voicelines from a database,
+				which is filled from voicelines gathered from <a href="https://wiki.teamfortress.com">the TF2 wiki</a>.
+			</p>
+
+			<form class="form-inline">
+				<div class="form-group">
+					<select class="form-control" ng-options="class for class in classes" ng-model="query.person">
+						<option value="">(Class)</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="query.quote" placeholder="Quote">
+				</div>
+				<button type="submit" class="btn btn-default" ng-click="submitQuery()">Search</button>
+			</form>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Class</th>
+						<th>Quote</th>
+						<th>Link</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="voiceline in voicelines">
+						<td>{{ voiceline.person }}</td>
+						<td>{{ voiceline.quote }}</td>
+						<td><a ng-href="{{ voiceline.link }}">Download</a></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</body>
+
+</html>
