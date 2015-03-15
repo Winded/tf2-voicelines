@@ -49,37 +49,52 @@ $classes = [
 	],
 ];
 
+function processNode($node, $class) {
+
+	global $vlRepo, $baseUrl, $manager;
+
+	$id = $node->attr("title");
+	$link = $baseUrl . $node->attr("href");
+	$quote = $node->text();
+	if(!$id || !$link || !$quote) {
+		return;
+	}
+
+	$vl = $vlRepo->find($id);
+	if(!$vl) {
+		$vl = new Voiceline();
+		$vl->setId($id);
+	}
+	$vl->setPerson($class);
+	$vl->setQuote($quote);
+	$vl->setLink($link);
+
+	$manager->persist($vl);
+
+}
+
 $lineCount = 0;
 foreach($classes as $class => $links) {
 	foreach($links as $link) {
 
 		$crawler = $client->request("GET", $link);
 
-		$crawler->filter("td > ul > li > a[class='internal']")->each(
-		function($node) use ($class) {
-			global $vlRepo, $baseUrl, $manager, $lineCount;
+		$links = $crawler->filter("td > ul > li > a[class='internal']");
+		$links2 = $crawler->filter("td > ul > li > ul > li > a[class='internal']");
 
-			$id = $node->attr("title");
-			$link = $baseUrl . $node->attr("href");
-			$quote = $node->text();
-
-			$vl = $vlRepo->find($id);
-			if(!$vl) {
-				$vl = new Voiceline();
-				$vl->setId($id);
-			}
-			$vl->setPerson($class);
-			$vl->setQuote($quote);
-			$vl->setLink($link);
-
-			$manager->persist($vl);
-
+		$links->each(function($node) use ($class) {
+			global $lineCount;
+			processNode($node, $class);
 			$lineCount++;
-
+		});
+		$links2->each(function($node) use ($class) {
+			global $lineCount;
+			processNode($node, $class);
+			$lineCount++;
 		});
 
 	}
 }
 
 $manager->flush();
-echo $lineCount . " lines processed";
+echo $lineCount . " lines processed\n";
