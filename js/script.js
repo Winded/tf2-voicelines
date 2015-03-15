@@ -1,13 +1,9 @@
 
-function urlSerialize(obj) {
-	var str = [];
-	for(var p in obj) {
-		if (obj.hasOwnProperty(p)) {
-			str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-		}
-	}
-	return str.join("&");
-}
+soundManager.setup({
+	url: '/voicelines/swf',
+	flashVersion: 9,
+	preferFlash: false
+});
 
 var app = angular.module("voicelinesApp", []);
 
@@ -30,21 +26,31 @@ app.controller("VoicelinesCtrl", function($scope, $http) {
 
 	$scope.submitQuery = function() {
 
-		var query = angular.copy($scope.query);
-		for(var key in query) {
-			var value = query[key];
-			if(!value || value == "") {
-				delete query[key];
-			}
+		if(!$scope.query.person && (!$scope.query.quote || $scope.query.quote == "")) {
+			$scope.searchUsed = false;
+			$scope.voicelines = {};
+			return;
 		}
-		var url = "api.php?" + urlSerialize(query);
 
-		$http.get(url).success(function(data) {
+		$scope.searchUsed = true;
+		$scope.loading = true;
+
+		$http.get("api.php", {params: $scope.query}).success(function(data) {
 			$scope.voicelines = data;
+			$scope.loading = false;
 		}).error(function(data, status) {
 			alert("Error: " + status);
 		});
 
 	};
+
+	$scope.previewVoiceline = function(voiceline) {
+
+		soundManager.createSound({
+			url: voiceline.link,
+			autoPlay: true
+		});
+
+	}
 
 });

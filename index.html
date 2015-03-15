@@ -14,6 +14,8 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
 
+		<script src="js/soundmanager2.js"></script>
+
 		<script src="js/script.js"></script>
 	
 	</head>
@@ -43,19 +45,36 @@
 			<table class="table">
 				<thead>
 					<tr>
+						<th>Name</th>
 						<th>Class</th>
 						<th>Quote</th>
 						<th>Link</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="voiceline in voicelines">
+					<tr  ng-hide="loading" ng-repeat="voiceline in voicelines">
+						<td>{{ voiceline.id }}</td>
 						<td>{{ voiceline.person }}</td>
 						<td>{{ voiceline.quote }}</td>
-						<td><a ng-href="{{ voiceline.link }}">Download</a></td>
+						<td>
+							<a ng-href="" ng-click="previewVoiceline(voiceline)">Preview</a> -
+							<a ng-href="{{ voiceline.link }}">Download</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>
+
+			<div class="alert alert-info" ng-hide="searchUsed">
+				Enter your search query and press Search.
+			</div>
+
+			<div class="alert alert-info" ng-show="loading">
+				Loading...
+			</div>
+
+			<div class="alert alert-info" ng-show="!loading && voicelines.length == 0">
+				No results.
+			</div>
 
 		</div>
 

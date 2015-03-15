@@ -10,8 +10,14 @@ $vlRepo = $manager->getRepository("Voiceline");
 
 $qb = $vlRepo->createQueryBuilder("vl");
 $qb->select("vl");
-foreach($_GET as $key => $value) {
-	$qb->where($qb->expr()->like("vl.$key", ":$key"));
+if(count($_GET) > 0) {
+	$likes = [];
+	foreach($_GET as $key => $value) {
+		array_push($likes, $qb->expr()->like("vl.$key", ":$key"));
+	}
+	$andX = $qb->expr()->andX();
+	$andX->addMultiple($likes);
+	$qb->where($andX);
 }
 
 $query = $qb->getQuery();
