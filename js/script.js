@@ -40,6 +40,9 @@ app.controller("VoicelinesCtrl", function($scope, $http) {
 			$scope.loading = false;
 		}).error(function(data, status) {
 			alert("Error: " + status);
+			$scope.voicelines = {};
+			$scope.searchUsed = false;
+			$scope.loading = false;
 		});
 
 	};
